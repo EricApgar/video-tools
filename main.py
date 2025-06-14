@@ -1,6 +1,7 @@
 import os
 import subprocess
-from moviepy.video.io.VideoFileClip import VideoFileClip
+# from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy import *
 import pygame
 
 # 1. Download a YouTube video (clip of specific duration) efficiently
