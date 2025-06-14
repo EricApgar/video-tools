@@ -1,6 +1,6 @@
 import os
 import subprocess
-from moviepy.video.io import VideoFileClip
+from moviepy.video.io.VideoFileClip import VideoFileClip
 import pygame
 
 # 1. Download a YouTube video (clip of specific duration) efficiently
@@ -16,6 +16,7 @@ def download_youtube_clip(url, output_path, start_time, end_time):
     subprocess.run([
         "yt-dlp",
         "--download-sections", time_range,
+        "--force-keyframes-at-cuts",
         "-f", "bestvideo+bestaudio",
         "--merge-output-format", "mp4",
         "-o", output_path,
