@@ -53,7 +53,7 @@ def play_video_fullscreen(video_path):
     """
     Plays a video full-screen using pygame.
     """
-    from moviepy.editor import VideoFileClip
+    from moviepy import VideoFileClip
 
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
