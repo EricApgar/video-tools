@@ -3,25 +3,24 @@ import subprocess
 from moviepy.video.io import VideoFileClip
 import pygame
 
-# 1. Download a YouTube video (clip of specific duration)
+# 1. Download a YouTube video (clip of specific duration) efficiently
+
 def download_youtube_clip(url, output_path, start_time, end_time):
     """
-    Downloads a YouTube video and trims it to the specified time range using ffmpeg.
+    Downloads a specific clip from a YouTube video without downloading the full video.
     - url: YouTube video URL
     - output_path: where to save the final clip (e.g., /home/pi/my_clip.mp4)
-    - start_time, end_time: format 'HH:MM:SS' or seconds
+    - start_time, end_time: format 'HH:MM:SS'
     """
-    temp_video = "temp_youtube_video.mp4"
+    time_range = f"*{start_time}-{end_time}"
     subprocess.run([
-        "yt-dlp", "-f", "best[ext=mp4]", "-o", temp_video, url
+        "yt-dlp",
+        "--download-sections", time_range,
+        "-f", "bestvideo+bestaudio",
+        "--merge-output-format", "mp4",
+        "-o", output_path,
+        url
     ])
-
-    subprocess.run([
-        "ffmpeg", "-ss", str(start_time), "-to", str(end_time),
-        "-i", temp_video, "-c:v", "libx264", "-c:a", "aac", "-strict", "experimental", output_path
-    ])
-
-    os.remove(temp_video)
 
 # 2. Crop a video to portrait (7.5 x 13.5 aspect ratio)
 def crop_to_portrait(input_path, output_path, target_width=720, target_height=1280):
@@ -68,7 +67,13 @@ def play_video_fullscreen(video_path):
     pygame.quit()
 
 # Example usage (uncomment to run)
+# download_youtube_clip("https://www.youtube.com/watch?v=EXAMPLE", "clip.mp4", "00:01:05", "00:01:35")
+# crop_to_portrait("clip.mp4", "portrait_clip.mp4")
+# play_video_fullscreen("portrait_clip.mp4")
+
+
+# Example usage (uncomment to run)
 if __name__ == '__main__':
-    download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:09:00", "00:09:30")
+    download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:01:00", "00:01:30")
     crop_to_portrait("clip.mp4", "portrait_clip.mp4")
     play_video_fullscreen("portrait_clip.mp4")
