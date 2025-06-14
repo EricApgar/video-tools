@@ -68,6 +68,7 @@ def play_video_fullscreen(video_path):
     pygame.quit()
 
 # Example usage (uncomment to run)
-# download_youtube_clip("https://www.youtube.com/watch?v=EXAMPLE", "clip.mp4", "00:01:05", "00:01:35")
-# crop_to_portrait("clip.mp4", "portrait_clip.mp4")
-# play_video_fullscreen("portrait_clip.mp4")
+if __name__ == '__main__':
+    download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:09:00", "00:09:30")
+    crop_to_portrait("clip.mp4", "portrait_clip.mp4")
+    play_video_fullscreen("portrait_clip.mp4")
