@@ -1,7 +1,6 @@
 import os
 import subprocess
-# from moviepy.video.io.VideoFileClip import VideoFileClip
-from moviepy import *
+import ffmpeg
 import pygame
 
 # 1. Download a YouTube video (clip of specific duration) efficiently
@@ -24,24 +23,29 @@ def download_youtube_clip(url, output_path, start_time, end_time):
         url
     ])
 
-# 2. Crop a video to portrait (7.5 x 13.5 aspect ratio)
+# 2. Crop a video to portrait (7.5 x 13.5 aspect ratio) using ffmpeg
+
 def crop_to_portrait(input_path, output_path, target_width=720, target_height=1280):
     """
-    Crops the video to a 9:16 portrait orientation.
-    - input_path: path to the original video
-    - output_path: path to save cropped video
+    Crops and resizes the video using ffmpeg-python to 9:16 portrait orientation.
+    This avoids MoviePy dependency issues on Raspberry Pi.
     """
-    clip = VideoFileClip(input_path)
-    original_w, original_h = clip.size
+    probe = ffmpeg.probe(input_path)
+    video_stream = next(s for s in probe['streams'] if s['codec_type'] == 'video')
+    original_w = int(video_stream['width'])
+    original_h = int(video_stream['height'])
 
     crop_width = int(original_h * 9 / 16)
-    x_center = original_w // 2
-    x1 = x_center - crop_width // 2
-    x2 = x_center + crop_width // 2
+    x_offset = (original_w - crop_width) // 2
 
-    cropped = clip.crop(x1=x1, x2=x2)
-    resized = cropped.resize((target_width, target_height))
-    resized.write_videofile(output_path, codec='libx264')
+    (
+        ffmpeg
+        .input(input_path)
+        .filter('crop', crop_width, original_h, x_offset, 0)
+        .filter('scale', target_width, target_height)
+        .output(output_path)
+        .run()
+    )
 
 # 3. Play video full screen
 
@@ -49,6 +53,8 @@ def play_video_fullscreen(video_path):
     """
     Plays a video full-screen using pygame.
     """
+    from moviepy.editor import VideoFileClip
+
     pygame.init()
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     clock = pygame.time.Clock()
