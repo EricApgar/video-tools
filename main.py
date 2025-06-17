@@ -49,7 +49,7 @@ def crop_to_portrait(input_path, output_path, target_width=720, target_height=12
 
 # 3. Play video full screen
 
-def play_video_fullscreen(video_path):
+def play_video_fullscreen_old(video_path):
     """
     Plays a video full-screen using pygame.
     """
@@ -73,6 +73,11 @@ def play_video_fullscreen(video_path):
         clock.tick(24)
 
     pygame.quit()
+
+
+def play_video_fullscreen(video_path):
+    subprocess.run(["mpv", "--fs", "--no-terminal", "--really-quiet", video_path])
+
 
 # Example usage (uncomment to run)
 # download_youtube_clip("https://www.youtube.com/watch?v=EXAMPLE", "clip.mp4", "00:01:05", "00:01:35")
