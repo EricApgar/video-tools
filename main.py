@@ -1,7 +1,6 @@
 import os
 import subprocess
 import ffmpeg
-import pygame
 
 # 1. Download a YouTube video (clip of specific duration) efficiently
 
@@ -25,10 +24,11 @@ def download_youtube_clip(url, output_path, start_time, end_time):
 
 # 2. Crop a video to portrait (7.5 x 13.5 aspect ratio) using ffmpeg
 
-def crop_to_portrait(input_path, output_path, target_width=720, target_height=1280):
+def crop_to_portrait(input_path, output_path, target_width=1080, target_height=1920, crop_center=0.5):
     """
     Crops and resizes the video using ffmpeg-python to 9:16 portrait orientation.
-    This avoids MoviePy dependency issues on Raspberry Pi.
+    Allows horizontal adjustment via crop_center (0.0 = far left, 1.0 = far right).
+    Re-encodes to H.264 MP4 at 30 FPS.
     """
     probe = ffmpeg.probe(input_path)
     video_stream = next(s for s in probe['streams'] if s['codec_type'] == 'video')
@@ -36,57 +36,36 @@ def crop_to_portrait(input_path, output_path, target_width=720, target_height=12
     original_h = int(video_stream['height'])
 
     crop_width = int(original_h * 9 / 16)
-    x_offset = (original_w - crop_width) // 2
+    crop_center = max(0.0, min(1.0, crop_center))  # Clamp to [0, 1]
+    center_x = int(original_w * crop_center)
+    x1 = center_x - crop_width // 2
+    x1 = max(0, min(x1, original_w - crop_width))  # Ensure within bounds
 
     (
         ffmpeg
         .input(input_path)
-        .filter('crop', crop_width, original_h, x_offset, 0)
+        .filter('crop', crop_width, original_h, x1, 0)
         .filter('scale', target_width, target_height)
-        .output(output_path)
+        .output(output_path, vcodec='libx264', r=30, acodec='aac', preset='fast')
         .run()
     )
 
-# 3. Play video full screen
-
-def play_video_fullscreen_old(video_path):
-    """
-    Plays a video full-screen using pygame.
-    """
-    from moviepy import VideoFileClip
-
-    pygame.init()
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    clock = pygame.time.Clock()
-
-    clip = VideoFileClip(video_path)
-    for frame in clip.iter_frames(fps=24, dtype='uint8'):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                return
-
-        surface = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
-        surface = pygame.transform.scale(surface, screen.get_size())
-        screen.blit(surface, (0, 0))
-        pygame.display.update()
-        clock.tick(24)
-
-    pygame.quit()
-
+# 3. Play video full screen using mpv
 
 def play_video_fullscreen(video_path):
+    """
+    Plays a video full-screen using mpv for smooth hardware-accelerated playback.
+    """
     subprocess.run(["mpv", "--fs", "--no-terminal", "--really-quiet", video_path])
-
 
 # Example usage (uncomment to run)
 # download_youtube_clip("https://www.youtube.com/watch?v=EXAMPLE", "clip.mp4", "00:01:05", "00:01:35")
-# crop_to_portrait("clip.mp4", "portrait_clip.mp4")
+# crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=0.25)
 # play_video_fullscreen("portrait_clip.mp4")
 
 
 # Example usage (uncomment to run)
 if __name__ == '__main__':
     download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:01:00", "00:01:30")
-    crop_to_portrait("clip.mp4", "portrait_clip.mp4")
+    crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=1)
     play_video_fullscreen("portrait_clip.mp4")
