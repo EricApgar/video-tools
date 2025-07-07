@@ -67,6 +67,6 @@ def play_video_fullscreen(video_path):
 
 # Example usage (uncomment to run)
 if __name__ == '__main__':
-    download_youtube_clip("https://www.youtube.com/watch?v=pQdTu0IeVho", "clip.mp4", "00:02:00", "00:02:30")
-    crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=.65)
+    download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:01:00", "00:01:30")
+    crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=.8)
     play_video_fullscreen("portrait_clip.mp4")
