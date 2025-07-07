@@ -14,6 +14,7 @@ def download_youtube_clip(url, output_path, start_time, end_time):
     time_range = f"*{start_time}-{end_time}"
     subprocess.run([
         "yt-dlp",
+        "--http-no-reuse",
         "--download-sections", time_range,
         "--force-keyframes-at-cuts",
         "-f", "bestvideo+bestaudio",
