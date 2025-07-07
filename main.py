@@ -67,7 +67,7 @@ def loop_video_fullscreen():
     """
     Plays a video in fullscreen on loop using mpv until the user manually stops the program.
     """
-    subprocess.run(["mpv", "--fs", "--loop", "inf", "--no-terminal", "--really-quiet", 'clip.4'])
+    subprocess.run(["mpv", "--fs", "--loop", "inf", "--no-terminal", "--really-quiet", 'portrait_clip.mp4'])
 
 
 # Example usage (uncomment to run)
