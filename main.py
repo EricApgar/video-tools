@@ -63,9 +63,16 @@ def play_video_fullscreen(video_path):
 # crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=0.25)
 # play_video_fullscreen("portrait_clip.mp4")
 
+def loop_video_fullscreen():
+    """
+    Plays a video in fullscreen on loop using mpv until the user manually stops the program.
+    """
+    subprocess.run(["mpv", "--fs", "--loop", "inf", "--no-terminal", "--really-quiet", 'clip.4'])
+
 
 # Example usage (uncomment to run)
 if __name__ == '__main__':
-    download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:01:00", "00:01:30")
-    crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=.8)
-    play_video_fullscreen("portrait_clip.mp4")
+    # download_youtube_clip("https://www.youtube.com/watch?v=zEvjBoDDp0M", "clip.mp4", "00:01:00", "00:01:30")
+    # crop_to_portrait("clip.mp4", "portrait_clip.mp4", crop_center=.8)
+    # play_video_fullscreen("portrait_clip.mp4")
+    loop_video_fullscreen()
