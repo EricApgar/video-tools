@@ -17,7 +17,7 @@ def download_youtube_clip(url, output_path, start_time, end_time):
         "--http-no-reuse",
         "--download-sections", time_range,
         "--force-keyframes-at-cuts",
-        "-f", "bestvideo+bestaudio",
+        "-f", "best[ext=mp4]",  #"-f", "bestvideo+bestaudio",
         "--merge-output-format", "mp4",
         "-o", output_path,
         url
