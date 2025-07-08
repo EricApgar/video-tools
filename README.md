@@ -10,3 +10,12 @@ Video editing tools.
 2. [https://www.youtube.com/watch?v=pQdTu0IeVho](Hogwarts Main Gate)
     * crop_center = .65
     * time = 00:02:00 - 00:02:30
+
+https://www.youtube.com/@GuildofAmbience
+
+https://www.youtube.com/@ViewEscape/videos
+
+https://www.youtube.com/@MyTranquilitee/videos
+
+https://www.youtube.com/watch?v=X-XZx1o_w-A
+
